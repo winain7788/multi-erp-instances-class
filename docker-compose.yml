@@ -77,5 +77,5 @@ services:
      - "443:443"
     volumes:
      - /home/multi-erp-instances-class/proxy/proxy.conf:/etc/nginx/conf.d/proxy.conf
-     - /home/multi-erp-instances-class/proxy/ssl:/etc/ssl/winai-nadee.info
+     - /home/multi-erp-instances-class/proxy/ssl:/etc/ssl/{your-domain}
 
