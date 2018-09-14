@@ -1,5 +1,5 @@
 # multi-erp-instances-class
-This respository provide an initial template for setting up multiple instances of Dolibarr ERP syste for use in a class room.
+This respository provide an initial template for setting up multiple instances of Dolibarr ERP system for use in a class room.
 
 1) Manually download Dolibarr ERP from "https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.0/dolibarr-8.0.0.tgz/download"
 
