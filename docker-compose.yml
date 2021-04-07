@@ -1,81 +1,65 @@
 version: '3'
 
 services:
-  erp_db:
-    container_name: erp_db
+  db:
+    container_name: db
+    image: mariadb:latest
     environment:
-     - MYSQL_ROOT_PASSWORD=yourpassword
-    image: mariadb
+      - MYSQL_ROOT_PASSWORD=yourpassword
     ports:
-     - "3306:3306"
+      - "3306:3306"
     volumes:
-     - /home/multi-erp-instances-class/mysql/data:/var/lib/mysql
-  erp_web00:
-    container_name: erp_web00
-    depends_on: 
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
-    ports:
-     - "8000:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr00/htdocs:/var/www/html 
-     - /home/multi-erp-instances-class/erp/conf00:/var/www/html/conf 
-  erp_web01:
-    container_name: erp_web01
+      - ./mysql/:/var/lib/mysql
+    restart: always
+  dbadmin:
+    container_name: dbadmin
+    image: phpmyadmin/phpmyadmin
     depends_on:
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
+      - db
+    links:
+      - db:db
+    restart: always
+  proxy:
+    container_name: proxy
+    image: nginx:latest
     ports:
-     - "8001:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr01/htdocs:/var/www/html
-     - /home/multi-erp-instances-class/erp/conf01:/var/www/html/conf
-  erp_web02:
-    container_name: erp_web02
-    depends_on:
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
-    ports:
-     - "8002:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr02/htdocs:/var/www/html
-     - /home/multi-erp-instances-class/erp/conf02:/var/www/html/conf
-  erp_web03:
-    container_name: erp_web03
-    depends_on:
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
-    ports:
-     - "8003:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr03/htdocs:/var/www/html
-     - /home/multi-erp-instances-class/erp/conf03:/var/www/html/conf
-  erp_web04:
-    container_name: erp_web04
-    depends_on:
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
-    ports:
-     - "8004:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr04/htdocs:/var/www/html
-     - /home/multi-erp-instances-class/erp/conf04:/var/www/html/conf
-  erp_web05:
-    container_name: erp_web05
-    depends_on:
-      - "erp_db"
-    image: richarvey/nginx-php-fpm
-    ports:
-     - "8005:80"
-    volumes:
-     - /home/multi-erp-instances-class/erp/dolibarr05/htdocs:/var/www/html
-     - /home/multi-erp-instances-class/erp/conf05:/var/www/html/conf
-  erp_proxy:
-    container_name: erp_proxy
-    image: nginx
-    ports:
+     - "80:80"
      - "443:443"
     volumes:
-     - /home/multi-erp-instances-class/proxy/proxy.conf:/etc/nginx/conf.d/proxy.conf
-     - /home/multi-erp-instances-class/proxy/ssl:/etc/ssl/{your-domain}
-
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+      - ./certs:/etc/letsencrypt
+      - ./certs-data:/data/letsencrypt
+    restart: always
+  web00:
+    container_name: web00
+    image: richarvey/nginx-php-fpm:1.10.1
+    depends_on:
+      - "db"
+    volumes:
+      - ./erp/dolibarr00/htdocs:/var/www/html
+    restart: always
+  web01:
+    container_name: web01
+    image: richarvey/nginx-php-fpm:1.10.1
+    depends_on:
+      - "db"
+    volumes:
+      - ./erp/dolibarr01/htdocs:/var/www/html
+    restart: always
+  web02:
+    container_name: web02
+    image: richarvey/nginx-php-fpm:1.10.1
+    depends_on:
+      - "db"
+    volumes:
+      - ./erp/dolibarr02/htdocs:/var/www/html
+    restart: always
+  web03:
+    container_name: web03
+    image: richarvey/nginx-php-fpm:1.10.1
+    depends_on:
+      - "db"
+    volumes:
+      - ./erp/dolibarr03/htdocs:/var/www/html
+    restart: always
