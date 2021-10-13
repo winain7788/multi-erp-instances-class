@@ -63,3 +63,11 @@ services:
     volumes:
       - ./erp/dolibarr03/htdocs:/var/www/html
     restart: always
+  web04:
+    container_name: web04
+    image: richarvey/nginx-php-fpm:1.10.1
+    depends_on:
+      - "db"
+    volumes:
+      - ./erp/dolibarr04/htdocs:/var/www/html
+    restart: always
